@@ -93,7 +93,7 @@ async def notify_to_chat(context: ContextTypes.DEFAULT_TYPE):
             save_last_post(latest_post['url'])
 
 # --- Fungsi post_init untuk penjadwalan job ---
-async def on_startup(application, context):
+async def on_startup(application):
     application.job_queue.run_repeating(notify_to_chat, interval=30, first=5)
 
 def main():
