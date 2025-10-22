@@ -6,8 +6,8 @@ from datetime import datetime, timedelta, timezone
 from telegram import Update
 from telegram.ext import Application, CommandHandler, ContextTypes
 
-TELEGRAM_TOKEN = os.environ.get('TELEGRAM_TOKEN') or 'tes-token'
-CHAT_ID = os.environ.get('CHAT_ID') or 'tes-chatid'
+TELEGRAM_TOKEN = os.environ.get('TELEGRAM_TOKEN') or 'tes_token'
+CHAT_ID = os.environ.get('CHAT_ID') or 'tes_chatid'
 URL = 'https://blog.indodax.com/newsroom-latest-stories'
 LAST_POST_FILE = 'last_post.json'
 KEYWORDS_FILE = 'keywords.json'
@@ -56,7 +56,7 @@ async def key_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     keywords = load_keywords()
     args = context.args
     if not args:
-        await update.message.reply_text(f"Daftar kata saat ini:\n{', '.join(keywords)}")
+        await update.message.reply_text(f"Daftar keyword saat ini:\n{', '.join(keywords)}")
     else:
         kw = ' '.join(args).strip().lower()
         if kw:
@@ -84,7 +84,7 @@ async def notify_to_chat(context: ContextTypes.DEFAULT_TYPE):
                 f"Indodax blog news update:\n\n"
                 f"{latest_post['title']}\n"
                 f"{latest_post['url']}\n\n"
-                f"Waktu update: {now}"
+                f"Waktu update (WIB): {now}"
             )
             try:
                 await context.bot.send_message(chat_id=CHAT_ID, text=message, disable_web_page_preview=False)
@@ -92,10 +92,14 @@ async def notify_to_chat(context: ContextTypes.DEFAULT_TYPE):
                 print(f"Gagal kirim ke {CHAT_ID}: {e}")
             save_last_post(latest_post['url'])
 
+# --- Fungsi post_init untuk penjadwalan job ---
+async def on_startup(application):
+    application.job_queue.run_repeating(notify_to_chat, interval=30, first=5)
+
 def main():
     application = Application.builder().token(TELEGRAM_TOKEN).build()
     application.add_handler(CommandHandler("key", key_handler))
-    application.job_queue.run_repeating(notify_to_chat, interval=30, first=5)
+    application.post_init = on_startup  
 
     print("Bot berjalan...")
     application.run_polling()
