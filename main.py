@@ -84,7 +84,7 @@ async def notify_to_chat(context: ContextTypes.DEFAULT_TYPE):
                 f"Indodax blog news update:\n\n"
                 f"{latest_post['title']}\n"
                 f"{latest_post['url']}\n\n"
-                f"Waktu update (WIB): {now}"
+                f"Waktu update: {now}"
             )
             try:
                 await context.bot.send_message(chat_id=CHAT_ID, text=message, disable_web_page_preview=False)
