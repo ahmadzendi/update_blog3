@@ -97,7 +97,7 @@ async def on_startup(application):
     application.job_queue.run_repeating(notify_to_chat, interval=30, first=5)
 
 def main():
-    application = Application.builder().token(TELEGRAM_TOKEN).build()
+    application = Application.builder().token(TELEGRAM_TOKEN).post_init_jobs(True).build()
     application.add_handler(CommandHandler("key", key_handler))
     application.post_init = on_startup  
 
