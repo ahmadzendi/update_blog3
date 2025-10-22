@@ -16,7 +16,7 @@ def load_keywords():
     if os.path.exists(KEYWORDS_FILE):
         with open(KEYWORDS_FILE, 'r') as f:
             return json.load(f).get('keywords', [])
-    return ['listing', 'token']
+    return ['listing', 'token', 'pemeliharaan', 'hold', 'delisting', 'pembaruan', 'competition', 'migrasi', 'rebranding']
 
 def save_keywords(keywords):
     with open(KEYWORDS_FILE, 'w') as f:
@@ -99,7 +99,7 @@ async def on_startup(application):
 def main():
     application = Application.builder().token(TELEGRAM_TOKEN).build()
     application.add_handler(CommandHandler("key", key_handler))
-    application.post_init = on_startup  # <-- Penjadwalan job di sini
+    application.post_init = on_startup 
 
     print("Bot berjalan...")
     application.run_polling()
