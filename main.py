@@ -76,7 +76,8 @@ async def notify_to_chat(context: ContextTypes.DEFAULT_TYPE):
     keywords = load_keywords()
     last_post = load_last_post()
     latest_post = get_latest_post()
-    if latest_post and latest_post['url'] != last_post:
+    # if latest_post and latest_post['url'] != last_post: #tanpa filter en_US
+    if latest_post and '/en_US/' not in latest_post['url'] and latest_post['url'] != last_post:
         if contains_keyword(latest_post['title'], keywords):
             wib = timezone(timedelta(hours=7))
             now = datetime.now(wib).strftime('%Y-%m-%d %H:%M:%S')
